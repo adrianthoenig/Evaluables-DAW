@@ -477,6 +477,7 @@
             }
         }
 
+
         // imprimirTitulo -> imprime el titulo de la opción elegida
         public static void imprimirTitulo(string titulo)
         {
