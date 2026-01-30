@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "ev_fundamentos_2/1.0.0": {
+        "runtime": {
+          "ev_fundamentos_2.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ev_fundamentos_2/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
