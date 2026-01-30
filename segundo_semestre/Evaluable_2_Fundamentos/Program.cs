@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Runtime.CompilerServices;
-using Microsoft.Win32;
-
-namespace EvaluableFundamentos2
+﻿namespace EvaluableFundamentos2
 {
 
         /*
@@ -14,18 +10,18 @@ namespace EvaluableFundamentos2
         PROFESOR: Borja Martin Herrera
         -------------------------------------------------------------
         */
-    internal class programa
+    internal class Programa
     {
         public static void Main(string[] args)
         {
             // Limpiar consola
             Console.Clear();
 
-            // Diccionario para usuarios (key: contraseña, value: email)
+            // Diccionario para usuarios (key: email, value: contraseña)
             Dictionary<string, string> usuarios = new Dictionary<string, string>();
 
             // [ DEBUG ] dummy data
-            usuarios.Add("123", "adrian@gmail.com");
+            usuarios.Add("adrian@gmail.com", "123");
 
             // Variables globales
             bool autenticado = false;
@@ -50,10 +46,13 @@ namespace EvaluableFundamentos2
                 {
                     // INICIAR SESIÓN
                     case 1:
-                        login(autenticado, usuarios);
+                        autenticado = login(usuarios);
 
                         // Acceder a las opciones (una vez iniciado sesión)
-                        mostrarMenuLogeado();
+                        if(autenticado)
+                        {
+                            mostrarMenuLogeado();
+                        }
                         teclaContinuar();
                         break;
                     
@@ -89,7 +88,7 @@ namespace EvaluableFundamentos2
         }
 
         // login -> realiza un inicio de sesión
-        public static void login(bool authToken, Dictionary<string, string> dict)
+        public static bool login(Dictionary<string, string> dict)
         {
             // Variable de intentos de inicio de sesión
             int intentos = 3;
@@ -102,15 +101,26 @@ namespace EvaluableFundamentos2
                 
             // Validar correo
             string correo = Console.ReadLine().ToLower(); // el correo lo guardamos en minúsculas para hacer el match siempre
-            while(correo == null || correo.Equals(""))
+            while((correo == null || correo.Equals("")) || !dict.ContainsKey(correo))
             {
-                mensajeError("El correo no puede estar vacío!");
+
+                if(correo == null || correo.Equals(""))
+                {
+                    mensajeError("El correo no puede estar vacío!");
+                }
+
+                if(!dict.ContainsKey(correo))
+                {
+                    mensajeError("Ese correo no esta registrado!");
+                }
+
                 Console.Write("Introduce un correo valido: ");
                 correo = Console.ReadLine().ToLower();
             }
 
+
             // Pedir datos del usuario
-            while(intentos > 0 || authToken)
+            while(intentos > 0)
             {
                 Console.Clear();
                 imprimirTitulo("Iniciar sesión");
@@ -129,34 +139,28 @@ namespace EvaluableFundamentos2
                 }
 
                 // Comprobar que la cuenta exista
-                foreach(KeyValuePair<string, string> usuario in dict)
+                if(dict.ContainsKey(correo))
                 {
-                    if(usuario.Key == pass && usuario.Value == correo)
+                    if(dict[correo] == pass)
                     {
                         saltoLinea();
-                        Console.WriteLine("[ + ] Se ha iniciado sesión correctamente!");
-                        authToken = true;
-                        return;
+                        Console.WriteLine("[ + ] Se ha iniciado sesión correctamente");
+                        return true;
+                    } else
+                    {
+                        intentos--; // restar un intento
+                        mensajeError("Contraseña invalida, intentalo de nuevo!");
+                        teclaContinuar();
                     }
                 }
-
-                // Restar intentos
-                if(!authToken)
-                {
-                    intentos--;
-                    mensajeError("Contraseña invalida, intentalo de nuevo!");
-                    teclaContinuar();
-                } 
             }
 
             // Mensaje de final de método
-            if(intentos == 0)
-            {
-                saltoLinea();
-                Console.WriteLine("[ ! ] Has excedido el número de inicio de sesiones posibles...");
-                Console.WriteLine("Intentalo de nuevo más tarde");
-                return; // termina el método
-            }
+            saltoLinea();
+            Console.WriteLine("[ ! ] Has excedido el número de inicio de sesiones posibles...");
+            Console.WriteLine("Intentalo de nuevo más tarde");
+
+            return false; // termina el método
         }
 
         // signup -> registra nuevos usuarios
@@ -179,7 +183,7 @@ namespace EvaluableFundamentos2
             }
 
             // Comprobar que el correo no este en la lista
-            while(dict.ContainsValue(correo))
+            while(dict.ContainsKey(correo))
             {
                 mensajeError("Este correo ya está registrado");
                 Console.Write("Introduce un nuevo correo: ");
@@ -205,7 +209,7 @@ namespace EvaluableFundamentos2
             string pass = Console.ReadLine();
 
             // Validar contraseña
-            while(pass == null || pass.Equals("") || pass.Count() < 6)
+            while(pass == null || pass.Equals("") || pass.Count() <= 6)
             {
                 bool skip = false;
 
@@ -226,7 +230,7 @@ namespace EvaluableFundamentos2
             }
 
             // Todo OK! Registrar usuario
-            if(dict.TryAdd(pass, correo))
+            if(dict.TryAdd(correo, pass))
             {
                 // Usuario registrado correctamente
                 Console.WriteLine("[ + ] Te has registrado correctamente!");
