@@ -35,7 +35,7 @@ public class App {
 		);
 		
 		// Creando la carrera
-		Carrera grandPrix = new Carrera(cocheDos, cocheDos, 100, 5);
+		Carrera grandPrix = new Carrera(cocheUno, cocheDos, 100, 5);
 		
 		// Iniciar la carrera
 		grandPrix.iniciarCarrera();
